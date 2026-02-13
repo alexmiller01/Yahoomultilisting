@@ -41,14 +41,18 @@
       --yelp-red: #ff1a1a;
       --pin-color: #1a1a2e;
       --font: 'Yahoo Product Sans', system-ui, -apple-system, sans-serif;
+      --header-height: 131px;
     }
 
-    html, body {
+    html {
+      overflow-x: clip; /* Prevents horizontal scroll without breaking sticky */
+    }
+    
+    body {
       font-family: var(--font);
       background: var(--white);
       color: var(--text-primary);
       line-height: 1.4;
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -57,6 +61,9 @@
       background: var(--white);
       border-bottom: 1px solid var(--border-secondary);
       padding: 20px 34px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 200; /* Above business panel (z-index: 100) so shadow doesn't overlap */
     }
 
     .header-top {
@@ -83,7 +90,7 @@
     .search-box {
       display: flex;
       align-items: center;
-      width: 616px;
+      width: 1146px;
       height: 54px;
       background: var(--bg-secondary);
       border: 1px solid var(--border-primary);
@@ -553,10 +560,10 @@
     /* ========== BUSINESS PANEL ========== */
     .business-panel {
       position: fixed;
-      top: 0;
+      top: var(--header-height);
       right: -446px;
       width: 446px;
-      height: 100vh;
+      height: calc(100vh - var(--header-height));
       background: var(--white);
       overflow: hidden;
       transition: right 0.3s ease, opacity 0.3s ease;
@@ -1815,6 +1822,8 @@
       .business-panel {
         width: 100%;
         right: -100%;
+        top: 0;
+        height: 100vh;
       }
       
       body.panel-open .main {
@@ -2550,6 +2559,23 @@
   </section>
 
   <script>
+    // Dynamically set header height CSS variable
+    function updateHeaderHeight() {
+      const header = document.querySelector('.header');
+      if (header) {
+        const headerHeight = header.offsetHeight;
+        document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+      }
+    }
+    
+    // Update on load and resize
+    window.addEventListener('DOMContentLoaded', updateHeaderHeight);
+    window.addEventListener('resize', updateHeaderHeight);
+    // Also update immediately in case DOM is already loaded
+    if (document.readyState !== 'loading') {
+      updateHeaderHeight();
+    }
+    
     // HERE Maps initialization
     const apiKey = 'CJQ-lNVWhFhWMO8mTrCJ-SAPvK4Cv3dsfs3VqONzJpo';
     
@@ -2570,6 +2596,7 @@
         pixelRatio: window.devicePixelRatio || 1
       }
     );
+    
     
     // Make map responsive
     window.addEventListener('resize', () => map.getViewPort().resize());
