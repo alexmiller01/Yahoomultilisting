@@ -255,6 +255,7 @@
       gap: 20px;
       position: relative;
       transition: margin-right 0.3s ease;
+      max-width: 1146px;
     }
 
 
@@ -2639,7 +2640,7 @@
       
       const cardWidth = 256;
       const cardHeight = 220;
-      const gap = 8; // Increased gap for visual clarity
+      const gap = 16; // Larger gap to ensure no overlap with pin
       
       // Calculate pin position relative to map wrapper
       const pinLeft = pinRect.left - mapRect.left;
@@ -2649,11 +2650,18 @@
       const pinCenterX = pinLeft + pinRect.width / 2;
       const pinCenterY = pinTop + pinRect.height / 2;
       
-      // Available space in each direction
-      const spaceAbove = pinTop;
-      const spaceBelow = mapRect.height - pinBottom;
-      const spaceLeft = pinLeft;
-      const spaceRight = mapRect.width - pinRight;
+      // Get full pin element bounds (including any transform/scale effects)
+      const pinElementRect = pinElement.getBoundingClientRect();
+      const pinElementLeft = pinElementRect.left - mapRect.left;
+      const pinElementRight = pinElementRect.right - mapRect.left;
+      const pinElementTop = pinElementRect.top - mapRect.top;
+      const pinElementBottom = pinElementRect.bottom - mapRect.top;
+      
+      // Available space in each direction (using full pin element bounds)
+      const spaceAbove = pinElementTop;
+      const spaceBelow = mapRect.height - pinElementBottom;
+      const spaceLeft = pinElementLeft;
+      const spaceRight = mapRect.width - pinElementRight;
       
       let top, left;
       let position = 'above'; // Default preference
@@ -2663,39 +2671,60 @@
         position = 'above';
       } else if (spaceBelow >= cardHeight + gap) {
         position = 'below';
-      } else if (spaceLeft >= cardWidth + gap) {
-        position = 'left';
       } else if (spaceRight >= cardWidth + gap) {
         position = 'right';
+      } else if (spaceLeft >= cardWidth + gap) {
+        position = 'left';
       } else {
-        // Not enough space anywhere, use above and let it overflow
-        position = 'above';
+        // Not enough space anywhere, position to the right and clamp
+        position = 'right';
       }
       
-      // Position the card based on chosen direction
+      // Position the card based on chosen direction - ensure no overlap with pin
       switch (position) {
         case 'above':
-          top = pinTop - cardHeight - gap;
+          top = pinElementTop - cardHeight - gap;
           left = pinCenterX - cardWidth / 2;
           break;
         case 'below':
-          top = pinBottom + gap;
+          top = pinElementBottom + gap;
           left = pinCenterX - cardWidth / 2;
           break;
         case 'left':
           top = pinCenterY - cardHeight / 2;
-          left = pinLeft - cardWidth - gap;
+          left = pinElementLeft - cardWidth - gap;
           break;
         case 'right':
           top = pinCenterY - cardHeight / 2;
-          left = pinRight + gap;
+          left = pinElementRight + gap;
           break;
       }
       
       // Clamp to map bounds (with padding)
-      const padding = 4;
+      const padding = 8;
       top = Math.max(padding, Math.min(top, mapRect.height - cardHeight - padding));
       left = Math.max(padding, Math.min(left, mapRect.width - cardWidth - padding));
+      
+      // Final check: ensure card doesn't overlap pin after clamping
+      // If card would overlap pin horizontally, shift it
+      const cardRight = left + cardWidth;
+      const cardBottom = top + cardHeight;
+      
+      // Check for overlap and adjust if needed
+      const overlapsHorizontally = cardRight > pinElementLeft && left < pinElementRight;
+      const overlapsVertically = cardBottom > pinElementTop && top < pinElementBottom;
+      
+      if (overlapsHorizontally && overlapsVertically) {
+        // Card overlaps pin, shift it to the right of the pin
+        if (mapRect.width - pinElementRight >= cardWidth + gap) {
+          left = pinElementRight + gap;
+        } else {
+          // Shift to left of pin
+          left = pinElementLeft - cardWidth - gap;
+        }
+        // Re-clamp left position
+        left = Math.max(padding, Math.min(left, mapRect.width - cardWidth - padding));
+      }
       
       hoverCard.style.top = top + 'px';
       hoverCard.style.left = left + 'px';
@@ -2820,21 +2849,14 @@
       const label = listing.getAttribute('data-pin');
       
       listing.addEventListener('mouseenter', () => {
-        // Gently nudge map toward the pin
-        if (pinCoordinates[label]) {
-          const currentCenter = map.getCenter();
-          const targetLat = currentCenter.lat + (pinCoordinates[label].lat - currentCenter.lat) * 0.3;
-          const targetLng = currentCenter.lng + (pinCoordinates[label].lng - currentCenter.lng) * 0.3;
-          map.setCenter({ lat: targetLat, lng: targetLng }, true);
-        }
-        
-        // Find the pin in the DOM, activate it, and show hover card
+        // Find the pin in the DOM and activate it
         const pin = document.querySelector(`.here-marker[data-pin="${label}"]`);
         if (pin) {
           pin.classList.add('listing-hover-active');
+          
           // Only show hover card if business panel is not open
           if (!localGrid.classList.contains('panel-open')) {
-            // Wait for repaint so pin is at active size before positioning
+            // Show hover card immediately at current pin position (no map nudge)
             requestAnimationFrame(() => {
               showHoverCard(label, pin);
             });
