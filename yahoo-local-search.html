@@ -1696,7 +1696,6 @@
       align-items: center;
       gap: 4px;
       font-size: 13px;
-      margin-bottom: 10px;
     }
 
     .hover-card-hours .status-open {
@@ -1737,52 +1736,6 @@
       color: var(--text-secondary);
     }
 
-    .hover-card-buttons {
-      display: flex;
-      gap: 8px;
-    }
-
-    .hover-card-btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s ease;
-    }
-
-    .hover-card-btn svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .hover-card-btn.btn-website {
-      background: transparent;
-      border: 1.5px solid var(--purple);
-      color: var(--purple);
-    }
-
-    .hover-card-btn.btn-website:hover {
-      background: var(--purple-light);
-    }
-
-    .hover-card-btn.btn-order {
-      background: var(--purple);
-      border: 1.5px solid var(--purple);
-      color: white;
-    }
-
-    .hover-card-btn.btn-order:hover {
-      background: var(--indigo);
-      border-color: var(--indigo);
-    }
 
     /* Map Controls */
     .map-controls {
@@ -2393,23 +2346,6 @@
                 <span class="dot">•</span>
                 <span id="hoverCardHours" class="hours-text"></span>
               </div>
-              <div class="hover-card-buttons">
-                <a href="#" class="hover-card-btn btn-website">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                  </svg>
-                  Website
-                </a>
-                <a href="#" class="hover-card-btn btn-order">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <path d="M16 10a4 4 0 0 1-8 0"/>
-                  </svg>
-                  Order
-                </a>
-              </div>
             </div>
           </div>
           
@@ -2938,7 +2874,7 @@
       const pinRect = visiblePin.getBoundingClientRect();
       
       const cardWidth = 280;
-      const cardHeight = 240;
+      const cardHeight = 180;
       const gap = 16; // Larger gap to ensure no overlap with pin
       
       // Calculate pin position relative to map wrapper
