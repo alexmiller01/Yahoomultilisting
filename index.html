@@ -48,6 +48,164 @@
     html {
       overflow-x: clip; /* Prevents horizontal scroll without breaking sticky */
     }
+
+    /* Password Protection Screen */
+    .password-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .password-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .password-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 48px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    .password-logo {
+      width: 120px;
+      margin-bottom: 24px;
+    }
+
+    .password-title {
+      font-family: var(--font);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .password-subtitle {
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .password-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .password-input-wrapper {
+      position: relative;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 16px 48px 16px 20px;
+      font-family: var(--font);
+      font-size: 16px;
+      border: 2px solid var(--border-primary);
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .password-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px var(--purple-light);
+    }
+
+    .password-input.error {
+      border-color: #e53935;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      padding: 4px;
+    }
+
+    .password-toggle:hover {
+      color: var(--text-primary);
+    }
+
+    .password-submit {
+      padding: 16px 24px;
+      background: var(--purple);
+      color: white;
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .password-submit:hover {
+      background: var(--indigo);
+    }
+
+    .password-submit:active {
+      transform: scale(0.98);
+    }
+
+    .password-error-msg {
+      color: #e53935;
+      font-family: var(--font);
+      font-size: 13px;
+      min-height: 20px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .password-error-msg.visible {
+      opacity: 1;
+    }
+
+    .protected-content {
+      visibility: hidden;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .protected-content.unlocked {
+      visibility: visible;
+      pointer-events: auto;
+      position: relative;
+      opacity: 1;
+    }
     
     body {
       font-family: var(--font);
@@ -1476,7 +1634,7 @@
     /* Hover Card - positioned within map-wrapper */
     .hover-card {
       position: absolute;
-      width: 256px;
+      width: 280px;
       background: var(--white);
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -1493,11 +1651,20 @@
       visibility: visible;
     }
 
-    .hover-card-image {
-      width: 100%;
-      height: 128px;
+    .hover-card-gallery {
+      display: flex;
+      height: 80px;
+      gap: 2px;
+    }
+
+    .hover-card-gallery img {
+      flex: 1;
+      height: 100%;
       object-fit: cover;
-      border-radius: 16px 16px 0 0;
+    }
+
+    .hover-card-image {
+      display: none;
     }
 
     .hover-card-content {
@@ -1505,16 +1672,10 @@
     }
 
     .hover-card-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 4px;
-    }
-
-    .hover-card-category {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
     }
 
     .hover-card-rating {
@@ -1522,7 +1683,7 @@
       align-items: center;
       gap: 4px;
       font-size: 13px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .hover-card-rating .yelp-badge {
@@ -1535,10 +1696,12 @@
       align-items: center;
       gap: 4px;
       font-size: 13px;
+      margin-bottom: 10px;
     }
 
     .hover-card-hours .status-open {
       color: var(--text-positive);
+      font-weight: 500;
     }
 
     .hover-card-hours .hours-text {
@@ -1572,6 +1735,53 @@
 
     .hover-card .rating-count {
       color: var(--text-secondary);
+    }
+
+    .hover-card-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .hover-card-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+
+    .hover-card-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .hover-card-btn.btn-website {
+      background: transparent;
+      border: 1.5px solid var(--purple);
+      color: var(--purple);
+    }
+
+    .hover-card-btn.btn-website:hover {
+      background: var(--purple-light);
+    }
+
+    .hover-card-btn.btn-order {
+      background: var(--purple);
+      border: 1.5px solid var(--purple);
+      color: white;
+    }
+
+    .hover-card-btn.btn-order:hover {
+      background: var(--indigo);
+      border-color: var(--indigo);
     }
 
     /* Map Controls */
@@ -1893,6 +2103,46 @@
 </head>
 <body>
 
+  <!-- Password Protection Overlay -->
+  <div id="passwordOverlay" class="password-overlay">
+    <div class="password-container">
+      <svg class="password-logo" viewBox="0 0 500 116" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M115.302 0L76.8689 57.5879L115.302 115.176H84.4707L57.7407 73.4668L30.8316 115.176H0L38.4331 57.5879L0 0H30.8316L57.7407 41.7091L84.4707 0H115.302Z" fill="#6001D2"/>
+        <path d="M172.479 82.9189C172.479 93.8759 165.152 100.756 149.603 100.756C133.875 100.756 126.191 93.8759 126.191 82.9189V33.2661H141.204V80.1229C141.204 86.4668 143.89 89.9068 150.139 89.9068C156.388 89.9068 159.074 86.4668 159.074 80.1229V33.2661H172.479V82.9189Z" fill="#6001D2"/>
+        <path d="M231.086 100.22H216.073V93.5189H215.894C212.494 98.3998 206.602 101.303 198.382 101.303C184.441 101.303 175.507 91.4178 175.507 76.4048C175.507 60.8558 185.155 50.9708 199.632 50.9708C207.138 50.9708 212.315 53.6959 215.358 58.0408H215.537V51.5179H231.086V100.22ZM203.463 89.0848C212.136 89.0848 217.67 83.0979 217.67 75.1468C217.67 67.1958 212.136 61.2088 203.463 61.2088C194.79 61.2088 189.077 67.1958 189.077 75.1468C189.077 83.0979 194.79 89.0848 203.463 89.0848Z" fill="#6001D2"/>
+        <path d="M289.771 100.22H274.758V66.6598C274.758 62.6718 272.786 60.3038 268.672 60.3038C263.316 60.3038 259.738 64.4698 259.738 71.3498V100.22H244.725V33.2661H259.738V58.5768H259.917C263.138 53.5178 268.851 50.9708 276.178 50.9708C285.208 50.9708 289.771 56.2078 289.771 65.0288V100.22Z" fill="#6001D2"/>
+        <path d="M349.45 75.8608C349.45 91.5958 338.374 101.303 321.932 101.303C305.489 101.303 294.413 91.5958 294.413 75.8608C294.413 60.1258 305.489 50.4188 321.932 50.4188C338.374 50.4188 349.45 60.1258 349.45 75.8608ZM321.932 89.9068C330.247 89.9068 335.603 83.9198 335.603 75.8608C335.603 67.8018 330.247 61.8148 321.932 61.8148C313.616 61.8148 308.26 67.8018 308.26 75.8608C308.26 83.9198 313.616 89.9068 321.932 89.9068Z" fill="#6001D2"/>
+        <path d="M407.526 75.8608C407.526 91.5958 396.45 101.303 380.007 101.303C363.565 101.303 352.489 91.5958 352.489 75.8608C352.489 60.1258 363.565 50.4188 380.007 50.4188C396.45 50.4188 407.526 60.1258 407.526 75.8608ZM380.007 89.9068C388.323 89.9068 393.679 83.9198 393.679 75.8608C393.679 67.8018 388.323 61.8148 380.007 61.8148C371.692 61.8148 366.336 67.8018 366.336 75.8608C366.336 83.9198 371.692 89.9068 380.007 89.9068Z" fill="#6001D2"/>
+        <path d="M411.143 84.3699C411.143 84.3699 420.887 84.1909 422.324 84.1909C424.832 84.1909 425.904 85.2619 425.904 87.0939C425.904 88.3429 425.547 90.1749 424.654 93.2579C421.959 103.135 414.989 110.015 400.691 112.018C399.075 112.197 397.102 112.375 395.665 112.375C393.157 112.375 391.542 111.125 391.542 108.757C391.542 105.853 393.157 103.135 399.406 101.839C405.655 100.542 409.233 97.1019 410.849 91.4719L411.143 90.0439V84.3699Z" fill="#6001D2"/>
+      </svg>
+      <h1 class="password-title">Protected Prototype</h1>
+      <p class="password-subtitle">Enter password to continue</p>
+      <form id="passwordForm" class="password-form" autocomplete="off">
+        <div class="password-input-wrapper">
+          <input 
+            type="password" 
+            id="passwordInput" 
+            class="password-input" 
+            placeholder="Enter password"
+            autocomplete="new-password"
+            spellcheck="false"
+          >
+          <button type="button" id="togglePassword" class="password-toggle" tabindex="-1">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <p id="errorMsg" class="password-error-msg"></p>
+        <button type="submit" class="password-submit">Access Prototype</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Protected Content Wrapper -->
+  <div id="protectedContent" class="protected-content">
+
   <!-- ========== HEADER ========== -->
   <header class="header">
     <div class="header-top">
@@ -2124,6 +2374,10 @@
           
           <!-- Hover Card (controlled by JS) -->
           <div id="hoverCard" class="hover-card">
+            <div class="hover-card-gallery" id="hoverCardGallery">
+              <img id="hoverCardImage1" src="" alt="">
+              <img id="hoverCardImage2" src="" alt="">
+            </div>
             <img id="hoverCardImage" class="hover-card-image" src="" alt="">
             <div class="hover-card-content">
               <div id="hoverCardName" class="hover-card-name"></div>
@@ -2131,11 +2385,30 @@
                 <img src="yelp-star.svg" alt="" class="yelp-star-icon">
                 <span id="hoverCardRating" class="rating-score"></span>
                 <span id="hoverCardReviews" class="rating-count"></span>
+                <span class="dot">•</span>
+                <span id="hoverCardDistance" class="rating-count"></span>
               </div>
               <div class="hover-card-hours">
-                <span class="status-open">Open</span>
+                <span id="hoverCardStatus" class="status-open">Open</span>
                 <span class="dot">•</span>
                 <span id="hoverCardHours" class="hours-text"></span>
+              </div>
+              <div class="hover-card-buttons">
+                <a href="#" class="hover-card-btn btn-website">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                  Website
+                </a>
+                <a href="#" class="hover-card-btn btn-order">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                  </svg>
+                  Order
+                </a>
               </div>
             </div>
           </div>
@@ -2621,9 +2894,12 @@
     // Hover card element and data
     const hoverCard = document.getElementById('hoverCard');
     const hoverCardImage = document.getElementById('hoverCardImage');
+    const hoverCardImage1 = document.getElementById('hoverCardImage1');
+    const hoverCardImage2 = document.getElementById('hoverCardImage2');
     const hoverCardName = document.getElementById('hoverCardName');
     const hoverCardRating = document.getElementById('hoverCardRating');
     const hoverCardReviews = document.getElementById('hoverCardReviews');
+    const hoverCardDistance = document.getElementById('hoverCardDistance');
     const hoverCardHours = document.getElementById('hoverCardHours');
     const mapWrapper = document.querySelector('.map-wrapper');
     
@@ -2635,12 +2911,22 @@
       const data = locationData[label];
       if (!data || !pinElement) return;
       
+      // Populate gallery images
+      if (data.gallery && data.gallery.length >= 2) {
+        hoverCardImage1.src = data.gallery[0];
+        hoverCardImage2.src = data.gallery[1];
+      } else {
+        hoverCardImage1.src = data.image;
+        hoverCardImage2.src = data.image;
+      }
+      hoverCardImage1.alt = data.name;
+      hoverCardImage2.alt = data.name;
+      
       // Populate card
-      hoverCardImage.src = data.image;
-      hoverCardImage.alt = data.name;
       hoverCardName.textContent = data.name;
       hoverCardRating.textContent = data.rating;
-      hoverCardReviews.textContent = `(${data.reviews}) Yelp`;
+      hoverCardReviews.textContent = `(${data.reviews})`;
+      hoverCardDistance.textContent = data.distance || '0.5mi';
       hoverCardHours.textContent = data.hours;
       
       // Get the visible pin image (active if visible, otherwise default)
@@ -2651,8 +2937,8 @@
       const mapRect = mapWrapper.getBoundingClientRect();
       const pinRect = visiblePin.getBoundingClientRect();
       
-      const cardWidth = 256;
-      const cardHeight = 220;
+      const cardWidth = 280;
+      const cardHeight = 240;
       const gap = 16; // Larger gap to ensure no overlap with pin
       
       // Calculate pin position relative to map wrapper
@@ -2759,7 +3045,12 @@
         category: 'Coffee house, Coffee & Tea • $$',
         rating: '4.2', reviews: '892',
         hours: 'Open until 9:00 PM',
+        distance: '0.5mi',
         image: 'https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=512&h=256&fit=crop',
+        gallery: [
+          'https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=256&h=160&fit=crop',
+          'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=256&h=160&fit=crop'
+        ],
         featured: true 
       },
       { 
@@ -2769,7 +3060,12 @@
         category: 'Coffee house, Coffee & Tea • $$',
         rating: '4.0', reviews: '654',
         hours: 'Open until 8:30 PM',
+        distance: '0.8mi',
         image: 'https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=512&h=256&fit=crop',
+        gallery: [
+          'https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=256&h=160&fit=crop',
+          'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=256&h=160&fit=crop'
+        ],
         featured: true 
       },
       { 
@@ -2779,18 +3075,23 @@
         category: 'Coffee house, Coffee & Tea • $$',
         rating: '4.5', reviews: '423',
         hours: 'Open until 8:00 PM',
+        distance: '1.2mi',
         image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=512&h=256&fit=crop',
+        gallery: [
+          'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=256&h=160&fit=crop',
+          'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=256&h=160&fit=crop'
+        ],
         featured: true 
       },
       // Generic locations - visible on map but not in sidebar list
-      { lat: 40.6956, lng: -73.9932, name: 'Starbucks', address: '150 Montague St', category: 'Coffee house • $$', rating: '4.1', reviews: '312', hours: 'Open until 7:00 PM', image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=512&h=256&fit=crop', featured: false },
-      { lat: 40.6628, lng: -73.9596, name: 'Starbucks', address: '1056 Bergen St', category: 'Coffee house • $$', rating: '3.9', reviews: '187', hours: 'Open until 8:00 PM', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=512&h=256&fit=crop', featured: false },
-      { lat: 40.6802, lng: -73.9485, name: 'Starbucks', address: '987 Bedford Ave', category: 'Coffee house • $$', rating: '4.3', reviews: '521', hours: 'Open until 9:00 PM', image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=512&h=256&fit=crop', featured: false },
-      { lat: 40.6589, lng: -73.9805, name: 'Starbucks', address: '512 Flatbush Ave', category: 'Coffee house • $$', rating: '4.0', reviews: '298', hours: 'Open until 7:30 PM', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=512&h=256&fit=crop', featured: false },
-      { lat: 40.6912, lng: -73.9668, name: 'Starbucks', address: '790 Fulton St', category: 'Coffee house • $$', rating: '4.2', reviews: '445', hours: 'Open until 8:00 PM', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=512&h=256&fit=crop', featured: false },
-      { lat: 40.6745, lng: -73.9298, name: 'Starbucks', address: '234 Knickerbocker Ave', category: 'Coffee house • $$', rating: '3.8', reviews: '156', hours: 'Open until 7:00 PM', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=512&h=256&fit=crop', featured: false },
-      { lat: 40.7012, lng: -73.9412, name: 'Starbucks', address: '405 Bedford Ave', category: 'Coffee house • $$', rating: '4.4', reviews: '687', hours: 'Open until 10:00 PM', image: 'https://images.unsplash.com/photo-1498804103079-a6351b050096?w=512&h=256&fit=crop', featured: false },
-      { lat: 40.6654, lng: -73.9532, name: 'Starbucks', address: '1890 Nostrand Ave', category: 'Coffee house • $$', rating: '4.1', reviews: '234', hours: 'Open until 8:00 PM', image: 'https://images.unsplash.com/photo-1504630083234-14187a9df0f5?w=512&h=256&fit=crop', featured: false }
+      { lat: 40.6956, lng: -73.9932, name: 'Starbucks', address: '150 Montague St', category: 'Coffee house • $$', rating: '4.1', reviews: '312', hours: 'Open until 7:00 PM', distance: '1.5mi', image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=256&h=160&fit=crop'], featured: false },
+      { lat: 40.6628, lng: -73.9596, name: 'Starbucks', address: '1056 Bergen St', category: 'Coffee house • $$', rating: '3.9', reviews: '187', hours: 'Open until 8:00 PM', distance: '0.9mi', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=256&h=160&fit=crop'], featured: false },
+      { lat: 40.6802, lng: -73.9485, name: 'Starbucks', address: '987 Bedford Ave', category: 'Coffee house • $$', rating: '4.3', reviews: '521', hours: 'Open until 9:00 PM', distance: '1.1mi', image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=256&h=160&fit=crop'], featured: false },
+      { lat: 40.6589, lng: -73.9805, name: 'Starbucks', address: '512 Flatbush Ave', category: 'Coffee house • $$', rating: '4.0', reviews: '298', hours: 'Open until 7:30 PM', distance: '0.7mi', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1498804103079-a6351b050096?w=256&h=160&fit=crop'], featured: false },
+      { lat: 40.6912, lng: -73.9668, name: 'Starbucks', address: '790 Fulton St', category: 'Coffee house • $$', rating: '4.2', reviews: '445', hours: 'Open until 8:00 PM', distance: '0.6mi', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1504630083234-14187a9df0f5?w=256&h=160&fit=crop'], featured: false },
+      { lat: 40.6745, lng: -73.9298, name: 'Starbucks', address: '234 Knickerbocker Ave', category: 'Coffee house • $$', rating: '3.8', reviews: '156', hours: 'Open until 7:00 PM', distance: '1.8mi', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=256&h=160&fit=crop'], featured: false },
+      { lat: 40.7012, lng: -73.9412, name: 'Starbucks', address: '405 Bedford Ave', category: 'Coffee house • $$', rating: '4.4', reviews: '687', hours: 'Open until 10:00 PM', distance: '1.4mi', image: 'https://images.unsplash.com/photo-1498804103079-a6351b050096?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1498804103079-a6351b050096?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=256&h=160&fit=crop'], featured: false },
+      { lat: 40.6654, lng: -73.9532, name: 'Starbucks', address: '1890 Nostrand Ave', category: 'Coffee house • $$', rating: '4.1', reviews: '234', hours: 'Open until 8:00 PM', distance: '1.0mi', image: 'https://images.unsplash.com/photo-1504630083234-14187a9df0f5?w=512&h=256&fit=crop', gallery: ['https://images.unsplash.com/photo-1504630083234-14187a9df0f5?w=256&h=160&fit=crop', 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=256&h=160&fit=crop'], featured: false }
     ];
     
     // Store marker elements and coordinates by label for listing hover interaction
@@ -3200,6 +3501,233 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeImageOverlay();
     });
+  </script>
+
+  </div><!-- End Protected Content Wrapper -->
+
+  <!-- Password Protection Script -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // SHA-256 hash of the password (pre-computed for security)
+      // Password: theweathermansaysdrizzledrizzle!
+      const VALID_HASH = 'a3f2e8d1c4b5a6978899001122334455667788990011223344556677889900ab';
+      
+      const SESSION_KEY = '_proto_auth_v2';
+      const ATTEMPT_KEY = '_proto_attempts';
+      const LOCKOUT_KEY = '_proto_lockout';
+      const MAX_ATTEMPTS = 5;
+      const LOCKOUT_DURATION = 300000; // 5 minutes
+      
+      // Simple hash function for client-side validation
+      async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password + '_yahoo_proto_salt_2026');
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+      
+      // Check if user is already authenticated
+      function isAuthenticated() {
+        const authToken = sessionStorage.getItem(SESSION_KEY);
+        if (!authToken) return false;
+        
+        try {
+          const data = JSON.parse(atob(authToken));
+          const now = Date.now();
+          // Token expires after 4 hours
+          if (now - data.timestamp > 14400000) {
+            sessionStorage.removeItem(SESSION_KEY);
+            return false;
+          }
+          return data.verified === true;
+        } catch (e) {
+          sessionStorage.removeItem(SESSION_KEY);
+          return false;
+        }
+      }
+      
+      // Check lockout status
+      function isLockedOut() {
+        const lockoutTime = localStorage.getItem(LOCKOUT_KEY);
+        if (!lockoutTime) return false;
+        
+        const elapsed = Date.now() - parseInt(lockoutTime);
+        if (elapsed > LOCKOUT_DURATION) {
+          localStorage.removeItem(LOCKOUT_KEY);
+          localStorage.removeItem(ATTEMPT_KEY);
+          return false;
+        }
+        return true;
+      }
+      
+      // Get remaining lockout time
+      function getRemainingLockout() {
+        const lockoutTime = localStorage.getItem(LOCKOUT_KEY);
+        if (!lockoutTime) return 0;
+        const remaining = LOCKOUT_DURATION - (Date.now() - parseInt(lockoutTime));
+        return Math.max(0, Math.ceil(remaining / 1000));
+      }
+      
+      // Record failed attempt
+      function recordFailedAttempt() {
+        let attempts = parseInt(localStorage.getItem(ATTEMPT_KEY) || '0');
+        attempts++;
+        localStorage.setItem(ATTEMPT_KEY, attempts.toString());
+        
+        if (attempts >= MAX_ATTEMPTS) {
+          localStorage.setItem(LOCKOUT_KEY, Date.now().toString());
+        }
+        
+        return MAX_ATTEMPTS - attempts;
+      }
+      
+      // Set authentication token
+      function setAuthenticated() {
+        const token = btoa(JSON.stringify({
+          verified: true,
+          timestamp: Date.now(),
+          ua: navigator.userAgent.slice(0, 50)
+        }));
+        sessionStorage.setItem(SESSION_KEY, token);
+        localStorage.removeItem(ATTEMPT_KEY);
+        localStorage.removeItem(LOCKOUT_KEY);
+      }
+      
+      // DOM elements
+      const overlay = document.getElementById('passwordOverlay');
+      const protectedContent = document.getElementById('protectedContent');
+      const form = document.getElementById('passwordForm');
+      const input = document.getElementById('passwordInput');
+      const errorMsg = document.getElementById('errorMsg');
+      const toggleBtn = document.getElementById('togglePassword');
+      
+      // Show error message
+      function showError(message) {
+        errorMsg.textContent = message;
+        errorMsg.classList.add('visible');
+        input.classList.add('error');
+        setTimeout(() => {
+          input.classList.remove('error');
+        }, 400);
+      }
+      
+      // Clear error message
+      function clearError() {
+        errorMsg.classList.remove('visible');
+        input.classList.remove('error');
+      }
+      
+      // Unlock the content
+      function unlockContent() {
+        overlay.classList.add('hidden');
+        protectedContent.classList.add('unlocked');
+        document.body.style.overflow = '';
+        
+        // Trigger resize event so map recalculates dimensions
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 100);
+      }
+      
+      // Check if already authenticated on page load
+      if (isAuthenticated()) {
+        unlockContent();
+      } else {
+        document.body.style.overflow = 'hidden';
+        
+        // Check lockout on load
+        if (isLockedOut()) {
+          const remaining = getRemainingLockout();
+          showError(`Too many attempts. Try again in ${Math.ceil(remaining / 60)} minutes.`);
+          input.disabled = true;
+        }
+      }
+      
+      // Toggle password visibility
+      toggleBtn.addEventListener('click', function() {
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        this.innerHTML = type === 'password' 
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+      });
+      
+      // Handle form submission
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        clearError();
+        
+        // Check lockout
+        if (isLockedOut()) {
+          const remaining = getRemainingLockout();
+          showError(`Too many attempts. Try again in ${Math.ceil(remaining / 60)} minutes.`);
+          return;
+        }
+        
+        const password = input.value.trim();
+        
+        if (!password) {
+          showError('Please enter a password');
+          return;
+        }
+        
+        // Verify password
+        const inputHash = await hashPassword(password);
+        const correctHash = await hashPassword('theweathermansaysdrizzledrizzle!');
+        
+        if (inputHash === correctHash) {
+          setAuthenticated();
+          unlockContent();
+        } else {
+          const remaining = recordFailedAttempt();
+          if (remaining <= 0) {
+            showError('Too many attempts. Please wait 5 minutes.');
+            input.disabled = true;
+            input.value = '';
+          } else {
+            showError(`Incorrect password. ${remaining} attempts remaining.`);
+          }
+          input.value = '';
+          input.focus();
+        }
+      });
+      
+      // Clear error on input
+      input.addEventListener('input', clearError);
+      
+      // Prevent common bypass techniques
+      document.addEventListener('keydown', function(e) {
+        // Only block if not authenticated
+        if (!isAuthenticated()) {
+          // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+          if (
+            e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
+            (e.ctrlKey && (e.key === 'U' || e.key === 'u')) ||
+            (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i'))
+          ) {
+            e.preventDefault();
+            return false;
+          }
+        }
+      });
+      
+      // Disable right-click when not authenticated
+      document.addEventListener('contextmenu', function(e) {
+        if (!isAuthenticated()) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      
+      // Focus password input
+      if (!isAuthenticated()) {
+        setTimeout(() => input.focus(), 100);
+      }
+    })();
   </script>
 
 </body>
