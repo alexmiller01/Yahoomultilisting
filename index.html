@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yahoo Local Search - Starbucks</title>
   
-  <!-- HERE Maps API -->
+  <!-- HERE Maps API with Harp Engine -->
   <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
   <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
   <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
   <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-harp.js"></script>
   <link rel="stylesheet" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css">
   <style>
     @font-face {
@@ -2577,24 +2578,36 @@
       updateHeaderHeight();
     }
     
-    // HERE Maps initialization
+    // HERE Maps initialization with Harp Engine
     const apiKey = 'CJQ-lNVWhFhWMO8mTrCJ-SAPvK4Cv3dsfs3VqONzJpo';
     
     // Initialize the platform
     const platform = new H.service.Platform({ apikey: apiKey });
-    const defaultLayers = platform.createDefaultLayers();
+    const defaultLayers = platform.createDefaultLayers({
+      engineType: H.Map.EngineType.HARP
+    });
+    
+    // Apply custom style from GitHub
+    const styleJsonUrl = 'https://raw.githubusercontent.com/alexmiller01/Yahoomultilisting/main/style/style.json';
+    const customStyle = new H.map.render.harp.Style(styleJsonUrl);
+    
+    if (customStyle) {
+      const baseLayer = defaultLayers.vector.normal.map;
+      baseLayer.getProvider().setStyle(customStyle);
+    }
     
     // Center on A, B, C pins (average of their coordinates)
     const mapCenter = { lat: 40.6823, lng: -73.9763 };
     
-    // Initialize the map (zoom 14 = 25% more zoomed in, centered on featured pins)
+    // Initialize the map with Harp engine
     const map = new H.Map(
       document.getElementById('mapContainer'),
       defaultLayers.vector.normal.map,
       {
         zoom: 14,
         center: mapCenter,
-        pixelRatio: window.devicePixelRatio || 1
+        pixelRatio: window.devicePixelRatio || 1,
+        engineType: H.Map.EngineType.HARP
       }
     );
     
