@@ -56,7 +56,10 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background-image: url('damnimhandsome.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -64,6 +67,19 @@
       opacity: 1;
       visibility: visible;
       transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    @media (max-width: 768px) {
+      .password-overlay {
+        background-position: center top;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .password-overlay {
+        background-size: cover;
+        background-position: center;
+      }
     }
 
     .password-overlay.hidden {
@@ -74,17 +90,28 @@
 
     .password-container {
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 24px;
       padding: 48px;
       width: 100%;
       max-width: 420px;
+      margin: 16px;
       box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
       text-align: center;
     }
 
+    @media (max-width: 480px) {
+      .password-container {
+        padding: 32px 24px;
+        border-radius: 20px;
+      }
+    }
+
     .password-logo {
-      width: 120px;
+      width: 144px;
+      height: 40px;
+      object-fit: contain;
       margin-bottom: 24px;
     }
 
@@ -2059,15 +2086,7 @@
   <!-- Password Protection Overlay -->
   <div id="passwordOverlay" class="password-overlay">
     <div class="password-container">
-      <svg class="password-logo" viewBox="0 0 500 116" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M115.302 0L76.8689 57.5879L115.302 115.176H84.4707L57.7407 73.4668L30.8316 115.176H0L38.4331 57.5879L0 0H30.8316L57.7407 41.7091L84.4707 0H115.302Z" fill="#6001D2"/>
-        <path d="M172.479 82.9189C172.479 93.8759 165.152 100.756 149.603 100.756C133.875 100.756 126.191 93.8759 126.191 82.9189V33.2661H141.204V80.1229C141.204 86.4668 143.89 89.9068 150.139 89.9068C156.388 89.9068 159.074 86.4668 159.074 80.1229V33.2661H172.479V82.9189Z" fill="#6001D2"/>
-        <path d="M231.086 100.22H216.073V93.5189H215.894C212.494 98.3998 206.602 101.303 198.382 101.303C184.441 101.303 175.507 91.4178 175.507 76.4048C175.507 60.8558 185.155 50.9708 199.632 50.9708C207.138 50.9708 212.315 53.6959 215.358 58.0408H215.537V51.5179H231.086V100.22ZM203.463 89.0848C212.136 89.0848 217.67 83.0979 217.67 75.1468C217.67 67.1958 212.136 61.2088 203.463 61.2088C194.79 61.2088 189.077 67.1958 189.077 75.1468C189.077 83.0979 194.79 89.0848 203.463 89.0848Z" fill="#6001D2"/>
-        <path d="M289.771 100.22H274.758V66.6598C274.758 62.6718 272.786 60.3038 268.672 60.3038C263.316 60.3038 259.738 64.4698 259.738 71.3498V100.22H244.725V33.2661H259.738V58.5768H259.917C263.138 53.5178 268.851 50.9708 276.178 50.9708C285.208 50.9708 289.771 56.2078 289.771 65.0288V100.22Z" fill="#6001D2"/>
-        <path d="M349.45 75.8608C349.45 91.5958 338.374 101.303 321.932 101.303C305.489 101.303 294.413 91.5958 294.413 75.8608C294.413 60.1258 305.489 50.4188 321.932 50.4188C338.374 50.4188 349.45 60.1258 349.45 75.8608ZM321.932 89.9068C330.247 89.9068 335.603 83.9198 335.603 75.8608C335.603 67.8018 330.247 61.8148 321.932 61.8148C313.616 61.8148 308.26 67.8018 308.26 75.8608C308.26 83.9198 313.616 89.9068 321.932 89.9068Z" fill="#6001D2"/>
-        <path d="M407.526 75.8608C407.526 91.5958 396.45 101.303 380.007 101.303C363.565 101.303 352.489 91.5958 352.489 75.8608C352.489 60.1258 363.565 50.4188 380.007 50.4188C396.45 50.4188 407.526 60.1258 407.526 75.8608ZM380.007 89.9068C388.323 89.9068 393.679 83.9198 393.679 75.8608C393.679 67.8018 388.323 61.8148 380.007 61.8148C371.692 61.8148 366.336 67.8018 366.336 75.8608C366.336 83.9198 371.692 89.9068 380.007 89.9068Z" fill="#6001D2"/>
-        <path d="M411.143 84.3699C411.143 84.3699 420.887 84.1909 422.324 84.1909C424.832 84.1909 425.904 85.2619 425.904 87.0939C425.904 88.3429 425.547 90.1749 424.654 93.2579C421.959 103.135 414.989 110.015 400.691 112.018C399.075 112.197 397.102 112.375 395.665 112.375C393.157 112.375 391.542 111.125 391.542 108.757C391.542 105.853 393.157 103.135 399.406 101.839C405.655 100.542 409.233 97.1019 410.849 91.4719L411.143 90.0439V84.3699Z" fill="#6001D2"/>
-      </svg>
+      <img src="yahoo-logo.svg" alt="Yahoo" class="password-logo">
       <h1 class="password-title">Protected Prototype</h1>
       <p class="password-subtitle">Enter password to continue</p>
       <form id="passwordForm" class="password-form" autocomplete="off">
